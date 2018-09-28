@@ -23,7 +23,7 @@ Add [Property Use Logical] to your [stylelint configuration].
     "stylelint-use-logical"
   ],
   "rules": {
-    "csstools/stylelint-use-logical": "always" || "never" || "ignore"
+    "csstools/use-logical": "always" || "never" || "ignore"
   }
 }
 ```
@@ -105,7 +105,7 @@ certain properties. Those ignore statements
 ```js
 {
   "rules": {
-    "csstools/stylelint-use-logical": ["always", { "except": ['float', /^margin/] }]
+    "csstools/use-logical": ["always", { "except": ['float', /^margin/] }]
   }
 }
 ```
