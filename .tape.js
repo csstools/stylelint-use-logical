@@ -49,6 +49,11 @@ let accept = [], reject = [];
 	options: 'always',
 	warnings: 1,
 }, {
+	message: 'WARN: ":dir(ltr) { top: 0; margin-left: 0; float: left; }" throws 0 warnings',
+	sourceCSS: 'body:dir(ltr) { top: 0; margin-left: 0; float: left; }',
+	options: 'always',
+	warnings: 0
+}, {
 	message: 'FIX:  "left: 0" becomes "inset-inline-start: 0"',
 	sourceCSS: 'body { left: 0; }',
 	expectCSS: 'body { inset-inline-start: 0; }',
@@ -90,8 +95,14 @@ let accept = [], reject = [];
 	options: 'always'
 }, {
 	message: 'FIX:  "text-align: left" becomes "text-align: start"',
-	sourceCSS: 'body { text-align: start; }',
+	sourceCSS: 'body { text-align: left; }',
+	expectCSS: 'body { text-align: start; }',
 	options: 'always'
+}, {
+	message: 'FIX:  ":dir(ltr) { text-align: left }" remains unchanged',
+	sourceCSS: 'body:dir(ltr) { text-align: left; }',
+	expectCSS: 'body:dir(ltr) { text-align: left; }',
+	options: ['always']
 }, {
 	message: 'FIX:  "float: left; text-align: left" becomes "float: left; text-align: start" { except: [/^float$/i] }',
 	sourceCSS: 'body { float: left; text-align: start; }',

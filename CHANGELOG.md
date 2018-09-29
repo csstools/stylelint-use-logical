@@ -1,5 +1,12 @@
 # Changes to Property Use Logical
 
+### 1.1.0 (September 29, 2018)
+
+- Added: `direction` option to control whether properties and values are
+  reported or autofixed using _left to right_ or _right to left_ counterparts
+- Fixed: Physical properties and values within `:dir(ltr)` or `:dir(rtl)` are
+  ignored
+
 ### 1.0.1 (September 28, 2018)
 
 - Fix usage name

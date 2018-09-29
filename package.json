@@ -1,6 +1,6 @@
 {
   "name": "stylelint-use-logical",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "Enforce usage of logical properties and values in CSS",
   "author": "Jonathan Neal <jonathantneal@hotmail.com>",
   "license": "CC0-1.0",
@@ -27,7 +27,7 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "@babel/core": "^7.1.0",
+    "@babel/core": "^7.1.2",
     "@babel/preset-env": "^7.1.0",
     "babel-eslint": "^10.0.1",
     "eslint": "^5.6.1",

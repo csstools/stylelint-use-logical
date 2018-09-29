@@ -1,5 +1,5 @@
 import stylelint from 'stylelint';
-import { physicalPropertiesMap, physicalShorthandPropertiesMap, physicalPropertyValuesMap, physicalShorthandLogicalPropertiesMap } from './lib/maps';
+import { physicalProp, physical2Prop, physical4Prop, physicalValue } from './lib/maps';
 import { validateRuleWithProps } from './lib/validate';
 import ruleName from './lib/rule-name';
 import messages from './lib/messages';
@@ -10,6 +10,7 @@ const reportedDecls = new WeakMap();
 export default stylelint.createPlugin(ruleName, (method, opts, context) => {
 	const propExceptions = [].concat(Object(opts).except || []);
 	const isAutofix = isContextAutofixing(context);
+	const dir = /^rtl$/i.test(Object(opts).direction) ? 'rtl' : 'ltr';
 
 	return (root, result) => {
 		// validate the method
@@ -21,10 +22,24 @@ export default stylelint.createPlugin(ruleName, (method, opts, context) => {
 			}
 		});
 
+		const reportUnexpectedProperty = (decl, logicalProperty) => stylelint.utils.report({
+			message: messages.unexpectedProp(decl.prop, logicalProperty),
+			node: decl,
+			result,
+			ruleName
+		});
+
+		const reportUnexpectedValue = (node, value) => stylelint.utils.report({
+			message: messages.unexpectedValue(node.prop, node.value, value),
+			node,
+			result,
+			ruleName
+		});
+
 		if (isMethodValid && isMethodAlways(method)) {
 			walk(root, node => {
-				// validate or autofix multiple physical properties
-				physicalShorthandLogicalPropertiesMap.forEach(([props, prop]) => {
+				// validate or autofix 4 physical properties as logical shorthands
+				physical4Prop.forEach(([props, prop]) => {
 					validateRuleWithProps(node, props, (blockStartDecl, blockStartIndex, inlineStartDecl, inlineStartIndex, blockEndDecl, blockEndIndex, inlineEndDecl, inlineEndIndex) => { // eslint-disable-line
 						const firstInlineDecl = blockStartDecl;
 
@@ -53,12 +68,7 @@ export default stylelint.createPlugin(ruleName, (method, opts, context) => {
 							blockEndDecl.remove();
 							inlineEndDecl.remove();
 						} else if (!isDeclReported(blockStartDecl) && !isDeclReported(inlineStartDecl) && !isDeclReported(blockEndDecl) && !isDeclReported(inlineEndDecl)) {
-							stylelint.utils.report({
-								message: messages.unexpectedProp(firstInlineDecl.prop, prop),
-								node: firstInlineDecl,
-								result,
-								ruleName
-							});
+							reportUnexpectedProperty(firstInlineDecl, prop);
 
 							reportedDecls.set(blockStartDecl);
 							reportedDecls.set(inlineStartDecl);
@@ -68,8 +78,8 @@ export default stylelint.createPlugin(ruleName, (method, opts, context) => {
 					});
 				});
 
-				// validate physical shorthand properties
-				physicalShorthandPropertiesMap.forEach(([props, prop]) => {
+				// validate or autofix 2 physical properties as logical shorthands
+				physical2Prop(dir).forEach(([props, prop]) => {
 					validateRuleWithProps(node, props, (blockStartDecl, blockStartIndex, inlineStartDecl, inlineStartIndex) => { // eslint-disable-line
 						const firstInlineDecl = blockStartIndex < inlineStartIndex
 							? blockStartDecl
@@ -86,12 +96,7 @@ export default stylelint.createPlugin(ruleName, (method, opts, context) => {
 							blockStartDecl.remove();
 							inlineStartDecl.remove();
 						} else if (!isDeclReported(blockStartDecl) && !isDeclReported(inlineStartDecl)) {
-							stylelint.utils.report({
-								message: messages.unexpectedProp(firstInlineDecl.prop, prop),
-								node: firstInlineDecl,
-								result,
-								ruleName
-							});
+							reportUnexpectedProperty(firstInlineDecl, prop);
 
 							reportedDecls.set(blockStartDecl);
 							reportedDecls.set(inlineStartDecl);
@@ -99,19 +104,14 @@ export default stylelint.createPlugin(ruleName, (method, opts, context) => {
 					});
 				});
 
-				// validate or autofix physical properties (like left, margin-right, padding-bottom)
-				physicalPropertiesMap.forEach(([props, prop]) => {
+				// validate or autofix physical properties as logical
+				physicalProp(dir).forEach(([props, prop]) => {
 					validateRuleWithProps(node, props, physicalDecl => {
 						if (!isDeclAnException(physicalDecl, propExceptions)) {
 							if (isAutofix) {
 								physicalDecl.prop = prop;
 							} else if (!isDeclReported(physicalDecl)) {
-								stylelint.utils.report({
-									message: messages.unexpectedProp(physicalDecl.prop, prop),
-									node: physicalDecl,
-									result,
-									ruleName
-								});
+								reportUnexpectedProperty(physicalDecl, prop);
 
 								reportedDecls.set(physicalDecl);
 							}
@@ -119,9 +119,9 @@ export default stylelint.createPlugin(ruleName, (method, opts, context) => {
 					});
 				});
 
-				// validate physical property values
-				physicalPropertyValuesMap.forEach(([regexp, props]) => {
-					if (node.type === 'decl' && regexp.test(node.prop) && !isDeclAnException(node, propExceptions)) {
+				// validate or autofix physical values as logical
+				physicalValue(dir).forEach(([regexp, props]) => {
+					if (isNodeMatchingDecl(node, regexp) && !isDeclAnException(node, propExceptions)) {
 						const valuekey = node.value.toLowerCase();
 
 						if (valuekey in props) {
@@ -130,12 +130,7 @@ export default stylelint.createPlugin(ruleName, (method, opts, context) => {
 							if (isAutofix) {
 								node.value = value;
 							} else {
-								stylelint.utils.report({
-									message: messages.unexpectedValue(node.prop, node.value, value),
-									node,
-									result,
-									ruleName
-								});
+								reportUnexpectedValue(node, value);
 
 								reportedDecls.set(node);
 							}
@@ -149,9 +144,10 @@ export default stylelint.createPlugin(ruleName, (method, opts, context) => {
 
 export { ruleName }
 
-const isMethodIndifferent = method => method === 'ignore' || method === null || method === false;
+const isMethodIndifferent = method => method === 'ignore' || method === false || method === null;
 const isMethodAlways = method => method === 'always' || method === true;
 const isContextAutofixing = context => Boolean(Object(context).fix);
+const isNodeMatchingDecl = (decl, regexp) => decl.type === 'decl' && regexp.test(decl.prop);
 const isDeclAnException = (decl, propExceptions) => propExceptions.some(match => match instanceof RegExp
 	? match.test(decl.prop)
 : String(match || '').toLowerCase() === String(decl.prop || '').toLowerCase());
