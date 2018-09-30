@@ -20,7 +20,7 @@
     "pretest": "rollup -c .rollup.js --silent",
     "test": "npm run test:js && npm run test:tape",
     "test:js": "eslint *.js lib/*.js --cache --ignore-path .gitignore --quiet",
-    "test:tape": "node .tape.js"
+    "test:tape": "stylelint-tape"
   },
   "engines": {
     "node": ">=6.0.0"
@@ -36,7 +36,7 @@
     "rollup": "^0.66.2",
     "rollup-plugin-babel": "^4.0.3",
     "stylelint": "^9.6.0",
-    "tap-spec": "^5.0.0"
+    "stylelint-tape": "^1.0.0"
   },
   "peerDependencies": {
     "stylelint": "^9.6.0"
