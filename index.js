@@ -9,8 +9,8 @@ const reportedDecls = new WeakMap();
 
 export default stylelint.createPlugin(ruleName, (method, opts, context) => {
     const propExceptions = [].concat(Object(opts).except || []);
-    const isProp2 = isProp2Enabled(opts);
-    const isProp4 = isProp4Enabled(opts);
+    const isProp2ConversionEnabled = !isProp2Disabled(opts);
+    const isProp4ConversionEnabled = !isProp4Disabled(opts);
 	const isAutofix = isContextAutofixing(context);
 	const dir = /^rtl$/i.test(Object(opts).direction) ? 'rtl' : 'ltr';
 
@@ -41,8 +41,11 @@ export default stylelint.createPlugin(ruleName, (method, opts, context) => {
 		if (isMethodValid && isMethodAlways(method)) {
 			walk(root, node => {
                 // validate or autofix 4 physical properties as logical shorthands
-                if (isProp4) {
-                    physical4Prop.forEach(([props, prop]) => {
+                if (isProp4ConversionEnabled) {
+                    physical4Prop.filter(([physProps, logicalProp]) => { // eslint-disable-line
+                        return !physProps.some(physProp => propExceptions.includes(physProp));
+                    }).forEach(([props, prop]) => {
+
                         validateRuleWithProps(node, props, (blockStartDecl, blockStartIndex, inlineStartDecl, inlineStartIndex, blockEndDecl, blockEndIndex, inlineEndDecl, inlineEndIndex) => { // eslint-disable-line
                             const firstInlineDecl = blockStartDecl;
 
@@ -83,8 +86,10 @@ export default stylelint.createPlugin(ruleName, (method, opts, context) => {
                 }
 
                 // validate or autofix 2 physical properties as logical shorthands
-                if (isProp2) {
-                    physical2Prop(dir).forEach(([props, prop]) => {
+                if (isProp2ConversionEnabled) {
+                    physical2Prop(dir).filter(([physProps, logicalProp]) => { // eslint-disable-line
+                        return !physProps.some(physProp => propExceptions.includes(physProp));
+                    }).forEach(([props, prop]) => {
                         validateRuleWithProps(node, props, (blockStartDecl, blockStartIndex, inlineStartDecl, inlineStartIndex) => { // eslint-disable-line
                             const firstInlineDecl = blockStartIndex < inlineStartIndex
                                 ? blockStartDecl
@@ -153,8 +158,8 @@ export { ruleName }
 const isMethodIndifferent = method => method === 'ignore' || method === false || method === null;
 const isMethodAlways = method => method === 'always' || method === true;
 const isContextAutofixing = context => Boolean(Object(context).fix);
-const isProp2Enabled = context => Boolean(Object(context).prop2);
-const isProp4Enabled = context => Boolean(Object(context).prop4);
+const isProp2Disabled = opts => Boolean(Object(opts).disableProp2);
+const isProp4Disabled = opts => Boolean(Object(opts).disableProp4);
 const isNodeMatchingDecl = (decl, regexp) => decl.type === 'decl' && regexp.test(decl.prop);
 const isDeclAnException = (decl, propExceptions) => propExceptions.some(match => match instanceof RegExp
 	? match.test(decl.prop)
