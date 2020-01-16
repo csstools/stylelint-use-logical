@@ -1,5 +1,5 @@
 import stylelint from 'stylelint';
-import { physicalProp, physical2Prop, physical4Prop, physicalValue } from './lib/maps';
+import { physicalProp, physical2Prop, physical4Prop, physicalValueUnsupported, physicalValueSupported } from './lib/maps';
 import { validateRuleWithProps } from './lib/validate';
 import ruleName from './lib/rule-name';
 import messages from './lib/messages';
@@ -12,7 +12,7 @@ export default stylelint.createPlugin(ruleName, (method, opts, context) => {
     const isProp2ConversionEnabled = !isProp2Disabled(opts);
     const isProp4ConversionEnabled = !isProp4Disabled(opts);
 	const isAutofix = isContextAutofixing(context);
-	const dir = /^rtl$/i.test(Object(opts).direction) ? 'rtl' : 'ltr';
+    const dir = /^rtl$/i.test(Object(opts).direction) ? 'rtl' : 'ltr';
 
 	return (root, result) => {
 		// validate the method
@@ -36,7 +36,33 @@ export default stylelint.createPlugin(ruleName, (method, opts, context) => {
 			node,
 			result,
 			ruleName
-		});
+        });
+
+        const reportUnexpectedValueMixin = (node, value) => stylelint.utils.report({
+            message: messages.unexpectedValueMixin(node.prop, node.value, value),
+			node,
+			result,
+			ruleName
+        });
+
+        const validateOrAutofixPhysicalValuesAsLogical = (node, physValMap, reportFn) =>
+            physValMap(dir).forEach(([regexp, props]) => {
+                if (isNodeMatchingDecl(node, regexp) && !isDeclAnException(node, propExceptions)) {
+                    const valuekey = node.value.toLowerCase();
+
+                    if (valuekey in props) {
+                        const value = props[valuekey];
+
+                        if (isAutofix) {
+                            node.value = value;
+                        } else {
+                            reportFn(node, value);
+
+                            reportedDecls.set(node);
+                        }
+                    }
+                }
+            });
 
 		if (isMethodValid && isMethodAlways(method)) {
 			walk(root, node => {
@@ -128,27 +154,13 @@ export default stylelint.createPlugin(ruleName, (method, opts, context) => {
 							}
 						}
 					});
-				});
+                });
 
-				// validate or autofix physical values as logical
-				physicalValue(dir).forEach(([regexp, props]) => {
-					if (isNodeMatchingDecl(node, regexp) && !isDeclAnException(node, propExceptions)) {
-						const valuekey = node.value.toLowerCase();
+                // validate or autofix physical values as logical
+                validateOrAutofixPhysicalValuesAsLogical(node, physicalValueSupported, reportUnexpectedValue);
 
-						if (valuekey in props) {
-							const value = props[valuekey];
-
-							if (isAutofix) {
-								node.value = value;
-							} else {
-								reportUnexpectedValue(node, value);
-
-								reportedDecls.set(node);
-							}
-						}
-					}
-				});
-			});
+                validateOrAutofixPhysicalValuesAsLogical(node, physicalValueUnsupported, reportUnexpectedValueMixin);
+            });
 		}
 	};
 });

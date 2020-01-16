@@ -111,6 +111,12 @@ module.exports = {
                 disableProp4: "true"
             }],
             warnings: 0
+        }, {    // clear left. Should provide warning about unsupported logical!
+            source: 'body { clear: left; }',
+            args: ['always', {
+                except: []
+            }],
+            warnings: 1
         }
     ]
 };
