@@ -63,8 +63,8 @@ var messages = stylelint.utils.ruleMessages(ruleName, {
     return `Unexpected "${physicalValue}" value in "${property}" property. Use "${logicalValue}".`;
   },
 
-  unexpectedValueMixin(property, physicalValue, logicalValue) {
-    return `Unexpected "${physicalValue}" value in "${property}" property. Use mixin instead. "${logicalValue}" is an experimental logical.`;
+  unexpectedValueMixin(property, physicalValue) {
+    return `Unexpected "${physicalValue}" value in "${property}" property. Use mixin from _direction.scss.`;
   }
 
 });
