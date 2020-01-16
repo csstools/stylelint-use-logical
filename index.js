@@ -1,5 +1,5 @@
 import stylelint from 'stylelint';
-import { physicalProp, physical2Prop, physical4Prop, physicalValue } from './lib/maps';
+import { physicalProp, physical2Prop, physical4Prop, physicalValueUnsupported, physicalValueSupported } from './lib/maps';
 import { validateRuleWithProps } from './lib/validate';
 import ruleName from './lib/rule-name';
 import messages from './lib/messages';
@@ -8,9 +8,11 @@ import walk from './lib/walk';
 const reportedDecls = new WeakMap();
 
 export default stylelint.createPlugin(ruleName, (method, opts, context) => {
-	const propExceptions = [].concat(Object(opts).except || []);
+    const propExceptions = [].concat(Object(opts).except || []);
+    const isProp2ConversionEnabled = !isProp2Disabled(opts);
+    const isProp4ConversionEnabled = !isProp4Disabled(opts);
 	const isAutofix = isContextAutofixing(context);
-	const dir = /^rtl$/i.test(Object(opts).direction) ? 'rtl' : 'ltr';
+    const dir = /^rtl$/i.test(Object(opts).direction) ? 'rtl' : 'ltr';
 
 	return (root, result) => {
 		// validate the method
@@ -34,75 +36,110 @@ export default stylelint.createPlugin(ruleName, (method, opts, context) => {
 			node,
 			result,
 			ruleName
-		});
+        });
+
+        const reportUnexpectedValueMixin = (node, value) => stylelint.utils.report({
+            message: messages.unexpectedValueMixin(node.prop, node.value, value),
+			node,
+			result,
+			ruleName
+        });
+
+        const validateOrAutofixPhysicalValuesAsLogical = (node, physValMap, reportFn) =>
+            physValMap(dir).forEach(([regexp, props]) => {
+                if (isNodeMatchingDecl(node, regexp) && !isDeclAnException(node, propExceptions)) {
+                    const valuekey = node.value.toLowerCase();
+
+                    if (valuekey in props) {
+                        const value = props[valuekey];
+
+                        if (isAutofix) {
+                            node.value = value;
+                        } else {
+                            reportFn(node, value);
+
+                            reportedDecls.set(node);
+                        }
+                    }
+                }
+            });
 
 		if (isMethodValid && isMethodAlways(method)) {
 			walk(root, node => {
-				// validate or autofix 4 physical properties as logical shorthands
-				physical4Prop.forEach(([props, prop]) => {
-					validateRuleWithProps(node, props, (blockStartDecl, blockStartIndex, inlineStartDecl, inlineStartIndex, blockEndDecl, blockEndIndex, inlineEndDecl, inlineEndIndex) => { // eslint-disable-line
-						const firstInlineDecl = blockStartDecl;
+                // validate or autofix 4 physical properties as logical shorthands
+                if (isProp4ConversionEnabled) {
+                    physical4Prop.filter(([physProps, logicalProp]) => { // eslint-disable-line
+                        return !physProps.some(physProp => propExceptions.includes(physProp));
+                    }).forEach(([props, prop]) => {
 
-						if (isAutofix) {
-							const values = [blockStartDecl.value, inlineStartDecl.value, blockEndDecl.value, inlineEndDecl.value];
+                        validateRuleWithProps(node, props, (blockStartDecl, blockStartIndex, inlineStartDecl, inlineStartIndex, blockEndDecl, blockEndIndex, inlineEndDecl, inlineEndIndex) => { // eslint-disable-line
+                            const firstInlineDecl = blockStartDecl;
 
-							if (values[1] === values[3]) {
-								values.pop();
+                            if (isAutofix) {
+                                const values = [blockStartDecl.value, inlineStartDecl.value, blockEndDecl.value, inlineEndDecl.value];
 
-								if (values[2] === values[1]) {
-									values.pop();
+                                if (values[1] === values[3]) {
+                                    values.pop();
 
-									if (values[1] === values[0]) {
-										values.pop();
-									}
-								}
-							}
+                                    if (values[2] === values[1]) {
+                                        values.pop();
 
-							firstInlineDecl.cloneBefore({
-								prop,
-								value: values.length <= 2 ? values.join(' ') : `logical ${values.join(' ')}`
-							});
+                                        if (values[1] === values[0]) {
+                                            values.pop();
+                                        }
+                                    }
+                                }
 
-							blockStartDecl.remove();
-							inlineStartDecl.remove();
-							blockEndDecl.remove();
-							inlineEndDecl.remove();
-						} else if (!isDeclReported(blockStartDecl) && !isDeclReported(inlineStartDecl) && !isDeclReported(blockEndDecl) && !isDeclReported(inlineEndDecl)) {
-							reportUnexpectedProperty(firstInlineDecl, prop);
+                                firstInlineDecl.cloneBefore({
+                                    prop,
+                                    value: values.length <= 2 ? values.join(' ') : `logical ${values.join(' ')}`
+                                });
 
-							reportedDecls.set(blockStartDecl);
-							reportedDecls.set(inlineStartDecl);
-							reportedDecls.set(blockEndDecl);
-							reportedDecls.set(inlineEndDecl);
-						}
-					});
-				});
+                                blockStartDecl.remove();
+                                inlineStartDecl.remove();
+                                blockEndDecl.remove();
+                                inlineEndDecl.remove();
+                            } else if (!isDeclReported(blockStartDecl) && !isDeclReported(inlineStartDecl) && !isDeclReported(blockEndDecl) && !isDeclReported(inlineEndDecl)) {
+                                reportUnexpectedProperty(firstInlineDecl, prop);
 
-				// validate or autofix 2 physical properties as logical shorthands
-				physical2Prop(dir).forEach(([props, prop]) => {
-					validateRuleWithProps(node, props, (blockStartDecl, blockStartIndex, inlineStartDecl, inlineStartIndex) => { // eslint-disable-line
-						const firstInlineDecl = blockStartIndex < inlineStartIndex
-							? blockStartDecl
-						: inlineStartDecl;
+                                reportedDecls.set(blockStartDecl);
+                                reportedDecls.set(inlineStartDecl);
+                                reportedDecls.set(blockEndDecl);
+                                reportedDecls.set(inlineEndDecl);
+                            }
+                        });
+                    });
+                }
 
-						if (isAutofix) {
-							firstInlineDecl.cloneBefore({
-								prop,
-								value: blockStartDecl.value === inlineStartDecl.value
-									? blockStartDecl.value
-								: [blockStartDecl.value, inlineStartDecl.value].join(' ')
-							});
+                // validate or autofix 2 physical properties as logical shorthands
+                if (isProp2ConversionEnabled) {
+                    physical2Prop(dir).filter(([physProps, logicalProp]) => { // eslint-disable-line
+                        return !physProps.some(physProp => propExceptions.includes(physProp));
+                    }).forEach(([props, prop]) => {
+                        validateRuleWithProps(node, props, (blockStartDecl, blockStartIndex, inlineStartDecl, inlineStartIndex) => { // eslint-disable-line
+                            const firstInlineDecl = blockStartIndex < inlineStartIndex
+                                ? blockStartDecl
+                            : inlineStartDecl;
 
-							blockStartDecl.remove();
-							inlineStartDecl.remove();
-						} else if (!isDeclReported(blockStartDecl) && !isDeclReported(inlineStartDecl)) {
-							reportUnexpectedProperty(firstInlineDecl, prop);
+                            if (isAutofix) {
+                                firstInlineDecl.cloneBefore({
+                                    prop,
+                                    value: blockStartDecl.value === inlineStartDecl.value
+                                        ? blockStartDecl.value
+                                    : [blockStartDecl.value, inlineStartDecl.value].join(' ')
+                                });
 
-							reportedDecls.set(blockStartDecl);
-							reportedDecls.set(inlineStartDecl);
-						}
-					});
-				});
+                                blockStartDecl.remove();
+                                inlineStartDecl.remove();
+                            } else if (!isDeclReported(blockStartDecl) && !isDeclReported(inlineStartDecl)) {
+                                reportUnexpectedProperty(firstInlineDecl, prop);
+
+                                reportedDecls.set(blockStartDecl);
+                                reportedDecls.set(inlineStartDecl);
+                            }
+                        });
+                    });
+                }
 
 				// validate or autofix physical properties as logical
 				physicalProp(dir).forEach(([props, prop]) => {
@@ -117,27 +154,13 @@ export default stylelint.createPlugin(ruleName, (method, opts, context) => {
 							}
 						}
 					});
-				});
+                });
 
-				// validate or autofix physical values as logical
-				physicalValue(dir).forEach(([regexp, props]) => {
-					if (isNodeMatchingDecl(node, regexp) && !isDeclAnException(node, propExceptions)) {
-						const valuekey = node.value.toLowerCase();
+                // validate or autofix physical values as logical
+                validateOrAutofixPhysicalValuesAsLogical(node, physicalValueSupported, reportUnexpectedValue);
 
-						if (valuekey in props) {
-							const value = props[valuekey];
-
-							if (isAutofix) {
-								node.value = value;
-							} else {
-								reportUnexpectedValue(node, value);
-
-								reportedDecls.set(node);
-							}
-						}
-					}
-				});
-			});
+                validateOrAutofixPhysicalValuesAsLogical(node, physicalValueUnsupported, reportUnexpectedValueMixin);
+            });
 		}
 	};
 });
@@ -147,6 +170,8 @@ export { ruleName }
 const isMethodIndifferent = method => method === 'ignore' || method === false || method === null;
 const isMethodAlways = method => method === 'always' || method === true;
 const isContextAutofixing = context => Boolean(Object(context).fix);
+const isProp2Disabled = opts => Boolean(Object(opts).disableProp2);
+const isProp4Disabled = opts => Boolean(Object(opts).disableProp4);
 const isNodeMatchingDecl = (decl, regexp) => decl.type === 'decl' && regexp.test(decl.prop);
 const isDeclAnException = (decl, propExceptions) => propExceptions.some(match => match instanceof RegExp
 	? match.test(decl.prop)
