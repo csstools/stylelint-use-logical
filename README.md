@@ -85,7 +85,7 @@ Add [Property Use Logical] to your [stylelint configuration].
     "stylelint-use-logical"
   ],
   "rules": {
-    "liberty/use-logical-spec": ("always" || true) || ("ignore" || false || null)
+    "csstools/use-logical": ("always" || true) || ("ignore" || false || null)
   }
 }
 ```
@@ -165,7 +165,7 @@ matching a case-insensitive string or regular expression.
 ```js
 {
   "rules": {
-    "liberty/use-logical-spec": ["always", { "except": ['float', /^margin/i] }]
+    "csstools/use-logical": ["always", { "except": ['float', /^margin/i] }]
   }
 }
 ```
@@ -178,7 +178,7 @@ properties and values should be reported or autofixed.
 ```js
 {
   "rules": {
-    "liberty/use-logical-spec": ["always", { "direction": "ltr" || "rtl" }]
+    "csstools/use-logical": ["always", { "direction": "ltr" || "rtl" }]
   }
 }
 ```
