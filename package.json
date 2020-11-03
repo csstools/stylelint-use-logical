@@ -1,6 +1,6 @@
 {
   "name": "stylelint-use-logical-spec",
-  "version": "2.1.3",
+  "version": "2.1.4",
   "description": "Enforce usage of logical properties and values in CSS",
   "license": "CC0-1.0",
   "repository": "Jordan-Hall/stylelint-use-logical",
