@@ -12,6 +12,10 @@ module.exports = {
 		args: 'always',
 		warnings: 2
 	}, {
+		source: 'body { border-left: 0; left: 0 }',
+		args: 'always',
+		warnings: 2
+	}, {
 		source: 'body { top: 0; margin-left: 0 }',
 		args: 'always',
 		warnings: 2
@@ -81,5 +85,86 @@ module.exports = {
 		args: ['always', {
 			except: [/^float$/i]
 		}]
-	}]
+	}, {
+			source: 'body { border-left: 0; }',
+			expect: 'body { border-inline-start: 0; }',
+			args: 'always'
+		}, {
+			source: 'body { border-right: 0; }',
+			expect: 'body { border-inline-end: 0; }',
+			args: 'always'
+		}, {
+			source: 'body { border-top: 0; }',
+			expect: 'body { border-block-start: 0; }',
+			args: 'always'
+		}, {
+			source: 'body { border-bottom: 0; }',
+			expect: 'body { border-block-end: 0; }',
+			args: 'always'
+		},{
+			source: 'body { border-left-color: 0; }',
+			expect: 'body { border-inline-start-color: 0; }',
+			args: 'always'
+		}, {
+			source: 'body { border-right-color: 0; }',
+			expect: 'body { border-inline-end-color: 0; }',
+			args: 'always'
+		}, {
+			source: 'body { border-top-color: 0; }',
+			expect: 'body { border-block-start-color: 0; }',
+			args: 'always'
+		}, {
+			source: 'body { border-bottom-color: 0; }',
+			expect: 'body { border-block-end-color: 0; }',
+			args: 'always'
+		}, {
+			source: 'body { border-left-style: 0; }',
+			expect: 'body { border-inline-start-style: 0; }',
+			args: 'always'
+		}, {
+			source: 'body { border-right-style: 0; }',
+			expect: 'body { border-inline-end-style: 0; }',
+			args: 'always'
+		}, {
+			source: 'body { border-top-style: 0; }',
+			expect: 'body { border-block-start-style: 0; }',
+			args: 'always'
+		}, {
+			source: 'body { border-bottom-style: 0; }',
+			expect: 'body { border-block-end-style: 0; }',
+			args: 'always'
+		}, {
+			source: 'body { border-left-width: 0; }',
+			expect: 'body { border-inline-start-width: 0; }',
+			args: 'always'
+		}, {
+			source: 'body { border-right-width: 0; }',
+			expect: 'body { border-inline-end-width: 0; }',
+			args: 'always'
+		}, {
+			source: 'body { border-top-width: 0; }',
+			expect: 'body { border-block-start-width: 0; }',
+			args: 'always'
+		}, {
+			source: 'body { border-bottom-width: 0; }',
+			expect: 'body { border-block-end-width: 0; }',
+			args: 'always'
+		}, {
+			source: 'body { border-top-left-radius: 0; }',
+			expect: 'body { border-start-start-radius: 0; }',
+			args: 'always'
+		}, {
+			source: 'body { border-top-right-radius: 0; }',
+			expect: 'body { border-start-end-radius: 0; }',
+			args: 'always'
+		}, {
+			source: 'body { border-bottom-left-radius: 0; }',
+			expect: 'body { border-end-start-radius: 0; }',
+			args: 'always'
+		}, {
+			source: 'body { border-bottom-right-radius: 0; }',
+			expect: 'body { border-end-end-radius: 0; }',
+			args: 'always'
+		}
+	]
 };
