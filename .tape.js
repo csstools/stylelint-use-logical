@@ -10,11 +10,11 @@ module.exports = {
 	}, {
 		source: 'body { top: 0; left: 0 }',
 		args: 'always',
-		warnings: 1
+		warnings: 2
 	}, {
 		source: 'body { top: 0; margin-left: 0 }',
 		args: 'always',
-		warnings: [ 'Unexpected "top" property.', 'Unexpected "margin-left" property.' ]
+		warnings: 2
 	}, {
 		source: 'body { top: 0; margin-left: 0 }',
 		args: ['always', { except: ['top', /^margin/] }],
@@ -48,14 +48,6 @@ module.exports = {
 		expect: 'body { inset-inline: 0 }',
 		args: 'always'
 	}, {
-		source: 'body { left: 0; top: 0 }',
-		expect: 'body { inset-start: 0 }',
-		args: 'always'
-	}, {
-		source: 'body { bottom: 0; right: 0 }',
-		expect: 'body { inset-end: 0 }',
-		args: 'always'
-	}, {
 		source: 'body { top: 0; right: 0; bottom: 0; left: 0 }',
 		expect: 'body { inset: 0 }',
 		args: 'always'
@@ -63,7 +55,11 @@ module.exports = {
 		source: 'body { margin-top: 0; margin-right: 0; margin-left: 0 }',
 		expect: 'body { margin-block-start: 0; margin-inline: 0 }',
 		args: 'always'
-	}, {
+		}, {
+			source: 'body { margin-left: 0; }',
+			expect: 'body { margin-inline-start: 0; }',
+			args: 'always'
+		}, {
 		source: 'body { clear: left }',
 		expect: 'body { clear: inline-start }',
 		args: 'always'
