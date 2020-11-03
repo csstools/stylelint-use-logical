@@ -1,5 +1,5 @@
 module.exports = {
-	'csstools/use-logical': [{
+	'liberty/use-logical-spec': [{
 		source: 'body { left: 0 }',
 		args: 'always',
 		warnings: 1,
