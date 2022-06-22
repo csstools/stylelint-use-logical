@@ -1,9 +1,9 @@
 {
   "name": "stylelint-use-logical",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "description": "Enforce usage of logical properties and values in CSS",
-  "author": "Jonathan Neal <jonathantneal@hotmail.com>",
   "license": "CC0-1.0",
+  "author": "Jonathan Neal <jonathantneal@hotmail.com>",
   "repository": "csstools/stylelint-use-logical",
   "homepage": "https://github.com/csstools/stylelint-use-logical#readme",
   "bugs": "https://github.com/csstools/stylelint-use-logical/issues",
