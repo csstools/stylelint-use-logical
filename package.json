@@ -7,13 +7,19 @@
   "repository": "csstools/stylelint-use-logical",
   "homepage": "https://github.com/csstools/stylelint-use-logical#readme",
   "bugs": "https://github.com/csstools/stylelint-use-logical/issues",
-  "main": "index.cjs.js",
-  "module": "index.es.mjs",
+  "main": "index.cjs",
+  "module": "index.mjs",
+  "exports": {
+    ".": {
+      "import": "./index.mjs",
+      "node": "./index.cjs"
+    }
+  },
   "files": [
-    "index.cjs.js",
-    "index.cjs.js.map",
-    "index.es.mjs",
-    "index.es.mjs.map"
+    "index.cjs",
+    "index.cjs.map",
+    "index.mjs",
+    "index.mjs.map"
   ],
   "scripts": {
     "prepublishOnly": "npm test",
@@ -27,23 +33,18 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "@babel/core": "^7.4.4",
-    "@babel/preset-env": "^7.4.4",
-    "babel-eslint": "^10.0.1",
-    "eslint": "^5.16.0",
-    "eslint-config-dev": "^2.0.0",
+    "eslint": "^8.18.0",
+    "eslint-config-dev": "^3.1.0",
     "pre-commit": "^1.2.2",
-    "rollup": "^1.11.3",
-    "rollup-plugin-babel": "^4.3.2",
-    "stylelint": "^11.1.1",
-    "stylelint-tape": "^1.0.2"
+    "rollup": "^2.75.7",
+    "stylelint": "^14.9.1",
+    "stylelint-tape": "^3.0.0"
   },
   "peerDependencies": {
-    "stylelint": "^11.1.1"
+    "stylelint": ">= 11 < 15"
   },
   "eslintConfig": {
-    "extends": "dev",
-    "parser": "babel-eslint"
+    "extends": "dev"
   },
   "keywords": [
     "stylelint",

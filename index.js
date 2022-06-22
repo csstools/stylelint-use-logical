@@ -39,12 +39,12 @@ export default stylelint.createPlugin(ruleName, (method, opts, context) => {
 		if (isMethodValid && isMethodAlways(method)) {
 			walk(root, node => {
 				// validate or autofix 4 physical properties as logical shorthands
-				physical4Prop.forEach(([props, prop]) => {
+				physical4Prop.forEach(([ props, prop ]) => {
 					validateRuleWithProps(node, props, (blockStartDecl, blockStartIndex, inlineStartDecl, inlineStartIndex, blockEndDecl, blockEndIndex, inlineEndDecl, inlineEndIndex) => { // eslint-disable-line
 						const firstInlineDecl = blockStartDecl;
 
 						if (isAutofix) {
-							const values = [blockStartDecl.value, inlineStartDecl.value, blockEndDecl.value, inlineEndDecl.value];
+							const values = [ blockStartDecl.value, inlineStartDecl.value, blockEndDecl.value, inlineEndDecl.value ];
 
 							if (values[1] === values[3]) {
 								values.pop();
@@ -79,7 +79,7 @@ export default stylelint.createPlugin(ruleName, (method, opts, context) => {
 				});
 
 				// validate or autofix 2 physical properties as logical shorthands
-				physical2Prop().forEach(([props, prop]) => {
+				physical2Prop().forEach(([ props, prop ]) => {
 					validateRuleWithProps(node, props, (blockStartDecl, blockStartIndex, inlineStartDecl, inlineStartIndex) => { // eslint-disable-line
 						const firstInlineDecl = blockStartIndex < inlineStartIndex
 							? blockStartDecl
@@ -90,7 +90,7 @@ export default stylelint.createPlugin(ruleName, (method, opts, context) => {
 								prop,
 								value: blockStartDecl.value === inlineStartDecl.value
 									? blockStartDecl.value
-								: [blockStartDecl.value, inlineStartDecl.value].join(' ')
+								: [ blockStartDecl.value, inlineStartDecl.value ].join(' ')
 							});
 
 							blockStartDecl.remove();
@@ -105,7 +105,7 @@ export default stylelint.createPlugin(ruleName, (method, opts, context) => {
 				});
 
 				// validate or autofix physical properties as logical
-				physicalProp(dir).forEach(([props, prop]) => {
+				physicalProp(dir).forEach(([ props, prop ]) => {
 					validateRuleWithProps(node, props, physicalDecl => {
 						if (!isDeclAnException(physicalDecl, propExceptions)) {
 							if (isAutofix) {
@@ -120,7 +120,7 @@ export default stylelint.createPlugin(ruleName, (method, opts, context) => {
 				});
 
 				// validate or autofix physical values as logical
-				physicalValue(dir).forEach(([regexp, props]) => {
+				physicalValue(dir).forEach(([ regexp, props ]) => {
 					if (isNodeMatchingDecl(node, regexp) && !isDeclAnException(node, propExceptions)) {
 						const valuekey = node.value.toLowerCase();
 
