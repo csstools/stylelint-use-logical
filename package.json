@@ -1,6 +1,6 @@
 {
   "name": "stylelint-use-logical",
-  "version": "3.0.0",
+  "version": "2.0.0",
   "description": "Enforce usage of logical properties and values in CSS",
   "license": "CC0-1.0",
   "author": "Jonathan Neal <jonathantneal@hotmail.com>",
@@ -29,7 +29,7 @@
     "test:tape": "stylelint-tape"
   },
   "engines": {
-    "node": ">=8.0.0"
+    "node": ">=14.0.0"
   },
   "dependencies": {},
   "devDependencies": {

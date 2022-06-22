@@ -2,8 +2,8 @@
 
 ### 2.0.0 (May 12, 2018)
 
-- Updated: peer `stylelint` to 10.0.1 (major)
-- Updated: Node 8+ compatibility (major)
+- Updated: peer `stylelint` to >= 11 < 15 (major)
+- Updated: Node 14+ compatibility (major)
 
 ### 1.1.0 (September 29, 2018)
 
