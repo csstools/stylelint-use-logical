@@ -6,7 +6,7 @@ module.exports = {
 	}, {
 		source: 'body { left: 0 }',
 		args: [ 'always', { except: 'left' }],
-	warnings: 0,
+		warnings: 0,
 	}, {
 		source: 'body { top: 0; left: 0 }',
 		args: 'always',
