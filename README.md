@@ -208,6 +208,15 @@ Assuming _left to right_ directionality:
 | `padding-bottom`  | `padding-block-end`    |
 | `padding-left`    | `padding-inline-start` |
 
+| Physical Property | Logical Property       |
+| ----------------- | ---------------------- |
+| `width`           | `inline-size`          |
+| `min-width`       | `min-inline-size`      |
+| `max-width`       | `max-inline-size`      |
+| `height`          | `block-size`           |
+| `min-height`      | `min-block-size`       |
+| `max-height`      | `max-block-size`       |
+
 [cli-img]: https://img.shields.io/travis/csstools/stylelint-use-logical.svg
 [cli-url]: https://travis-ci.org/csstools/stylelint-use-logical
 [git-img]: https://img.shields.io/badge/support-chat-blue.svg

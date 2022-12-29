@@ -86,6 +86,30 @@ module.exports = {
 			except: [ /^float$/i ]
 		}]
 	}, {
+		source: 'body { width: 0; }',
+		expect: 'body { inline-size: 0; }',
+		args: 'always'
+	}, {
+		source: 'body { min-width: 0; }',
+		expect: 'body { min-inline-size: 0; }',
+		args: 'always'
+	}, {
+		source: 'body { max-width: 0; }',
+		expect: 'body { max-inline-size: 0; }',
+		args: 'always'
+	}, {
+		source: 'body { height: 0; }',
+		expect: 'body { block-size: 0; }',
+		args: 'always'
+	}, {
+		source: 'body { min-height: 0; }',
+		expect: 'body { min-block-size: 0; }',
+		args: 'always'
+	}, {
+		source: 'body { max-height: 0; }',
+		expect: 'body { max-block-size: 0; }',
+		args: 'always'
+	}, {
 			source: 'body { border-left: 0; }',
 			expect: 'body { border-inline-start: 0; }',
 			args: 'always'
