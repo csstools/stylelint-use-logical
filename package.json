@@ -22,8 +22,9 @@
     "index.mjs.map"
   ],
   "scripts": {
+    "build": "rollup --bundleConfigAsCjs -c .rollup.js --silent",
     "prepublishOnly": "npm test",
-    "pretest": "rollup -c .rollup.js --silent",
+    "pretest": "rollup --bundleConfigAsCjs -c .rollup.js --silent",
     "test": "npm run test:js && npm run test:tape",
     "test:js": "eslint *.js lib/*.js --cache --ignore-path .gitignore --quiet",
     "test:tape": "stylelint-tape"
@@ -33,15 +34,15 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "eslint": "^8.18.0",
-    "eslint-config-dev": "^3.1.0",
-    "pre-commit": "^1.2.2",
-    "rollup": "^2.75.7",
-    "stylelint": "^14.9.1",
-    "stylelint-tape": "^3.0.0"
+    "eslint": "8.35.0",
+    "eslint-config-dev": "3.1.0",
+    "pre-commit": "1.2.2",
+    "rollup": "3.18.0",
+    "stylelint": "15.2.0",
+    "stylelint-tape": "3.0.0"
   },
   "peerDependencies": {
-    "stylelint": ">= 11 < 15"
+    "stylelint": ">= 11 < 16"
   },
   "eslintConfig": {
     "extends": "dev"
