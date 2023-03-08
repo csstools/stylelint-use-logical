@@ -5,7 +5,7 @@ module.exports = {
 		warnings: 1,
 	}, {
 		source: 'body { left: 0 }',
-		args: ['always', { except: 'left' }],
+		args: [ 'always', { except: 'left' }],
 		warnings: 0,
 	}, {
 		source: 'body { top: 0; left: 0 }',
@@ -21,7 +21,7 @@ module.exports = {
 		warnings: 2
 	}, {
 		source: 'body { top: 0; margin-left: 0 }',
-		args: ['always', { except: ['top', /^margin/] }],
+		args: [ 'always', { except: [ 'top', /^margin/ ] }],
 		warnings: 0
 	}, {
 		source: 'body { padding-left: 0; margin-right: 0 }',
@@ -78,13 +78,37 @@ module.exports = {
 	}, {
 		source: 'body:dir(ltr) { text-align: left }',
 		expect: 'body:dir(ltr) { text-align: left }',
-		args: ['always']
+		args: [ 'always' ]
 	}, {
 		source: 'body { float: left; text-align: left }',
 		expect: 'body { float: left; text-align: start }',
-		args: ['always', {
-			except: [/^float$/i]
+		args: [ 'always', {
+			except: [ /^float$/i ]
 		}]
+	}, {
+		source: 'body { width: 0; }',
+		expect: 'body { inline-size: 0; }',
+		args: 'always'
+	}, {
+		source: 'body { min-width: 0; }',
+		expect: 'body { min-inline-size: 0; }',
+		args: 'always'
+	}, {
+		source: 'body { max-width: 0; }',
+		expect: 'body { max-inline-size: 0; }',
+		args: 'always'
+	}, {
+		source: 'body { height: 0; }',
+		expect: 'body { block-size: 0; }',
+		args: 'always'
+	}, {
+		source: 'body { min-height: 0; }',
+		expect: 'body { min-block-size: 0; }',
+		args: 'always'
+	}, {
+		source: 'body { max-height: 0; }',
+		expect: 'body { max-block-size: 0; }',
+		args: 'always'
 	}, {
 			source: 'body { border-left: 0; }',
 			expect: 'body { border-inline-start: 0; }',
@@ -101,7 +125,7 @@ module.exports = {
 			source: 'body { border-bottom: 0; }',
 			expect: 'body { border-block-end: 0; }',
 			args: 'always'
-		},{
+		}, {
 			source: 'body { border-left-color: 0; }',
 			expect: 'body { border-inline-start-color: 0; }',
 			args: 'always'
