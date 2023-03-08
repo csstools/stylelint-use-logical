@@ -1,5 +1,10 @@
 # Changes to Property Use Logical
 
+### 2.1.0 (March 8, 2022)
+
+- Updated: peer `stylelint` to >= 11 < 16 (patch)
+- Added: Support for `width`, `height`, `min-width`, `min-height`, `max-width`, `max-height`.
+
 ### 2.0.0 (May 12, 2018)
 
 - Updated: peer `stylelint` to >= 11 < 15 (major)
