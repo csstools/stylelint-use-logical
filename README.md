@@ -217,6 +217,18 @@ Assuming _left to right_ directionality:
 | `min-height`      | `min-block-size`       |
 | `max-height`      | `max-block-size`       |
 
+| Physical Property           | Logical Property            |
+| --------------------------- | --------------------------- |
+| `border-top-left-radius`    | `border-start-start-radius` |
+| `border-top-right-radius`   | `border-start-end-radius`   |
+| `border-bottom-left-radius` | `border-end-start-radius`   |
+| `border-bottom-right-radius`| `border-end-end-radius`     |
+
+| Physical Value       | Logical Value         |
+| -------------------- | --------------------- |
+| `text-align: left;`  | `text-align: start;`  |
+| `text-align: right;` | `text-align: end;`    |
+
 [cli-img]: https://img.shields.io/travis/csstools/stylelint-use-logical.svg
 [cli-url]: https://travis-ci.org/csstools/stylelint-use-logical
 [git-img]: https://img.shields.io/badge/support-chat-blue.svg
