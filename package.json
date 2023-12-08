@@ -42,7 +42,7 @@
     "stylelint-tape": "3.0.0"
   },
   "peerDependencies": {
-    "stylelint": ">= 11 < 16"
+    "stylelint": ">= 11 < 17"
   },
   "eslintConfig": {
     "extends": "dev"
