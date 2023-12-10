@@ -7,7 +7,7 @@ import walk from './lib/walk';
 
 const reportedDecls = new WeakMap();
 
-export default stylelint.createPlugin(ruleName, (method, opts, context) => {
+const useLogical = stylelint.createPlugin(ruleName, (method, opts, context) => {
 	const propExceptions = [].concat(Object(opts).except || []);
 	const isAutofix = isContextAutofixing(context);
 	const dir = /^rtl$/i.test(Object(opts).direction) ? 'rtl' : 'ltr';
@@ -142,7 +142,9 @@ export default stylelint.createPlugin(ruleName, (method, opts, context) => {
 	};
 });
 
-export { ruleName }
+useLogical.ruleName = ruleName;
+
+export default useLogical;
 
 const isMethodIndifferent = method => method === 'ignore' || method === false || method === null;
 const isMethodAlways = method => method === 'always' || method === true;
