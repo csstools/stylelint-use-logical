@@ -1,5 +1,10 @@
 # Changes to Property Use Logical
 
+### 2.1.1 (February 19, 2024)
+
+- Updated: peer `stylelint` to `>= 11 < 17` (patch) [#22](https://github.com/csstools/stylelint-use-logical/pull/22)
+- Fixed: compatibility with `stylelint` 16 (patch) [#22](https://github.com/csstools/stylelint-use-logical/pull/22)
+
 ### 2.1.0 (March 8, 2022)
 
 - Updated: peer `stylelint` to >= 11 < 16 (patch)
