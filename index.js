@@ -41,6 +41,15 @@ function ruleFunc(method, opts, context) {
 				// validate or autofix 4 physical properties as logical shorthands
 				physical4Prop.forEach(([ props, prop ]) => {
 					validateRuleWithProps(node, props, (blockStartDecl, blockStartIndex, inlineStartDecl, inlineStartIndex, blockEndDecl, blockEndIndex, inlineEndDecl, inlineEndIndex) => { // eslint-disable-line
+						if (
+							isDeclAnException(blockStartDecl, propExceptions) ||
+							isDeclAnException(inlineStartDecl, propExceptions) ||
+							isDeclAnException(blockEndDecl, propExceptions) ||
+							isDeclAnException(inlineEndDecl, propExceptions)
+						) {
+							return;
+						}
+
 						const firstInlineDecl = blockStartDecl;
 
 						if (isAutofix) {
@@ -81,6 +90,13 @@ function ruleFunc(method, opts, context) {
 				// validate or autofix 2 physical properties as logical shorthands
 				physical2Prop().forEach(([ props, prop ]) => {
 					validateRuleWithProps(node, props, (blockStartDecl, blockStartIndex, inlineStartDecl, inlineStartIndex) => { // eslint-disable-line
+						if (
+							isDeclAnException(blockStartDecl, propExceptions) ||
+							isDeclAnException(inlineStartDecl, propExceptions)
+						) {
+							return;
+						}
+
 						const firstInlineDecl = blockStartIndex < inlineStartIndex
 							? blockStartDecl
 						: inlineStartDecl;
@@ -107,33 +123,41 @@ function ruleFunc(method, opts, context) {
 				// validate or autofix physical properties as logical
 				physicalProp(dir).forEach(([ props, prop ]) => {
 					validateRuleWithProps(node, props, physicalDecl => {
-						if (!isDeclAnException(physicalDecl, propExceptions)) {
-							if (isAutofix) {
-								physicalDecl.prop = prop;
-							} else if (!isDeclReported(physicalDecl)) {
-								reportUnexpectedProperty(physicalDecl, prop);
+						if (isDeclAnException(physicalDecl, propExceptions)) {
+							return;
+						}
 
-								reportedDecls.set(physicalDecl);
-							}
+						if (isAutofix) {
+							physicalDecl.prop = prop;
+						} else if (!isDeclReported(physicalDecl)) {
+							reportUnexpectedProperty(physicalDecl, prop);
+
+							reportedDecls.set(physicalDecl);
 						}
 					});
 				});
 
 				// validate or autofix physical values as logical
 				physicalValue(dir).forEach(([ regexp, props ]) => {
-					if (isNodeMatchingDecl(node, regexp) && !isDeclAnException(node, propExceptions)) {
-						const valuekey = node.value.toLowerCase();
+					if (!isNodeMatchingDecl(node, regexp)) {
+						return;
+					}
 
-						if (valuekey in props) {
-							const value = props[valuekey];
+					if (isDeclAnException(node, propExceptions)) {
+						return;
+					}
 
-							if (isAutofix) {
-								node.value = value;
-							} else {
-								reportUnexpectedValue(node, value);
+					const valuekey = node.value.toLowerCase();
 
-								reportedDecls.set(node);
-							}
+					if (valuekey in props) {
+						const value = props[valuekey];
+
+						if (isAutofix) {
+							node.value = value;
+						} else {
+							reportUnexpectedValue(node, value);
+
+							reportedDecls.set(node);
 						}
 					}
 				});
@@ -149,7 +173,19 @@ const isMethodIndifferent = method => method === 'ignore' || method === false ||
 const isMethodAlways = method => method === 'always' || method === true;
 const isContextAutofixing = context => Boolean(Object(context).fix);
 const isNodeMatchingDecl = (decl, regexp) => decl.type === 'decl' && regexp.test(decl.prop);
-const isDeclAnException = (decl, propExceptions) => propExceptions.some(match => match instanceof RegExp
-	? match.test(decl.prop)
-: String(match || '').toLowerCase() === String(decl.prop || '').toLowerCase());
+
+const isDeclAnException = (decl, propExceptions) => {
+	if (!decl || decl.type !== 'decl') {
+		return false;
+	}
+
+	return propExceptions.some((match) => {
+		if (match instanceof RegExp) {
+			return match.test(decl.prop);
+		}
+
+		return String(match || '').toLowerCase() === String(decl.prop || '').toLowerCase();
+	});
+}
+
 const isDeclReported = decl => reportedDecls.has(decl);

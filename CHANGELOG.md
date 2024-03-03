@@ -1,5 +1,10 @@
 # Changes to Property Use Logical
 
+### 2.1.2 (March 3, 2024)
+
+- Fix `exports` in `package.json` [#25](https://github.com/csstools/stylelint-use-logical/issues/25)
+- Fix `except` plugin option [#3](https://github.com/csstools/stylelint-use-logical/issues/3)
+
 ### 2.1.1 (February 19, 2024)
 
 - Updated: peer `stylelint` to `>= 11 < 17` (patch) [#22](https://github.com/csstools/stylelint-use-logical/pull/22)

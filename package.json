@@ -1,6 +1,6 @@
 {
   "name": "stylelint-use-logical",
-  "version": "2.1.1",
+  "version": "2.1.2",
   "description": "Enforce usage of logical properties and values in CSS",
   "license": "CC0-1.0",
   "author": "Jonathan Neal <jonathantneal@hotmail.com>",
@@ -12,7 +12,7 @@
   "exports": {
     ".": {
       "import": "./index.mjs",
-      "node": "./index.cjs"
+      "require": "./index.cjs"
     }
   },
   "files": [

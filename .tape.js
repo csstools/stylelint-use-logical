@@ -8,6 +8,30 @@ module.exports = {
 		args: [ 'always', { except: 'left' }],
 		warnings: 0,
 	}, {
+		source: 'body { top: -4px; left: 0; }',
+		args: 'always',
+		warnings: 2,
+	}, {
+		source: 'body { top: -4px; left: 0; }',
+		args: ['always', { except: 'top' }],
+		warnings: 1,
+	}, {
+		source: 'body { top: -4px; left: 0; }',
+		args: ['always', { except: 'left' }],
+		warnings: 1,
+	}, {
+		source: 'body { top: -4px; left: 0; }',
+		args: ['always', { except: ['top', 'left'] }],
+		warnings: 0,
+	}, {
+		source: 'body { margin-top: 0.5rem; margin-bottom: 0.5rem; }',
+		args: ['always', { except: ['margin-top'] }],
+		warnings: 1,
+	}, {
+		source: 'body { margin-top: 0.5rem; margin-bottom: 0.5rem; }',
+		args: ['always', { except: ['margin-top', 'margin-bottom'] }],
+		warnings: 0,
+	}, {
 		source: 'body { top: 0; left: 0 }',
 		args: 'always',
 		warnings: 2
