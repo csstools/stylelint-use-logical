@@ -37,7 +37,7 @@
     "eslint": "8.35.0",
     "eslint-config-dev": "3.1.0",
     "pre-commit": "1.2.2",
-    "rollup": "3.18.0",
+    "rollup": "3.29.5",
     "stylelint": "15.2.0",
     "stylelint-tape": "3.0.0"
   },
