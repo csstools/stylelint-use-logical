@@ -22,24 +22,19 @@
     "index.mjs.map"
   ],
   "scripts": {
-    "build": "rollup --bundleConfigAsCjs -c .rollup.js --silent",
+    "build": "rollup -c .rollup.mjs --silent",
     "prepublishOnly": "npm test",
-    "pretest": "rollup --bundleConfigAsCjs -c .rollup.js --silent",
-    "test": "npm run test:js && npm run test:tape",
-    "test:js": "eslint *.js lib/*.js --cache --ignore-path .gitignore --quiet",
-    "test:tape": "stylelint-tape"
+    "pretest": "npm run build",
+    "test": "stylelint-tape --cwd ./ --plugin index.mjs"
   },
   "engines": {
     "node": ">=14.0.0"
   },
   "dependencies": {},
   "devDependencies": {
-    "eslint": "8.35.0",
-    "eslint-config-dev": "3.1.0",
-    "pre-commit": "1.2.2",
-    "rollup": "3.18.0",
-    "stylelint": "15.2.0",
-    "stylelint-tape": "3.0.0"
+    "rollup": "^4.0.0",
+    "stylelint": "^16.0.0",
+    "stylelint-tape": "^5.0.0"
   },
   "peerDependencies": {
     "stylelint": ">= 11 < 17"

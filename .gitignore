@@ -1,11 +1,3 @@
 node_modules
-index.cjs*
-index.mjs*
-package-lock.json
 *.log*
-.*
-!.editorconfig
-!.gitignore
-!.rollup.js
-!.tape.js
-!.travis.yml
+
