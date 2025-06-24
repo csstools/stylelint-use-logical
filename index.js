@@ -102,12 +102,38 @@ function ruleFunc(method, opts, context) {
 						: inlineStartDecl;
 
 						if (isAutofix) {
-							firstInlineDecl.cloneBefore({
-								prop,
-								value: blockStartDecl.value === inlineStartDecl.value
-									? blockStartDecl.value
-								: [ blockStartDecl.value, inlineStartDecl.value ].join(' ')
-							});
+							// Check if both declarations have the same importance
+							if (blockStartDecl.important === inlineStartDecl.important) {
+								// Same importance, can use shorthand
+								firstInlineDecl.cloneBefore({
+									prop,
+									value: blockStartDecl.value === inlineStartDecl.value
+										? blockStartDecl.value
+									: [ blockStartDecl.value, inlineStartDecl.value ].join(' '),
+									important: blockStartDecl.important
+								});
+							} else {
+								// Different importance, must use individual properties
+								const mappings = physicalProp(dir);
+
+								// Find the logical property for each physical property
+								mappings.forEach(([physicalProps, logicalProp]) => {
+									if (physicalProps.includes(blockStartDecl.prop)) {
+										blockStartDecl.cloneBefore({
+											prop: logicalProp,
+											value: blockStartDecl.value,
+											important: blockStartDecl.important
+										});
+									}
+									if (physicalProps.includes(inlineStartDecl.prop)) {
+										inlineStartDecl.cloneBefore({
+											prop: logicalProp,
+											value: inlineStartDecl.value,
+											important: inlineStartDecl.important
+										});
+									}
+								});
+							}
 
 							blockStartDecl.remove();
 							inlineStartDecl.remove();
