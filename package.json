@@ -34,7 +34,7 @@
   "devDependencies": {
     "rollup": "^4.0.0",
     "stylelint": "^16.0.0",
-    "stylelint-tape": "^5.0.0"
+    "stylelint-tape": "^5.1.0"
   },
   "peerDependencies": {
     "stylelint": ">= 11 < 17"
