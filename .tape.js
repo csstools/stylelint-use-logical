@@ -76,6 +76,14 @@ module.exports = {
 		expect: 'body { inset-inline: 0 }',
 		args: 'always'
 	}, {
+		source: 'body { left: 0 !important; right: 0 !important }',
+		expect: 'body { inset-inline: 0 !important }',
+		args: 'always'
+	}, {
+		source: 'body { left: 0; right: 0 !important }',
+		expect: 'body { inset-inline-start: 0; inset-inline-end: 0 !important }',
+		args: 'always'
+	}, {
 		source: 'body { top: 0; right: 0; bottom: 0; left: 0 }',
 		expect: 'body { inset: 0 }',
 		args: 'always'
@@ -212,6 +220,14 @@ module.exports = {
 		}, {
 			source: 'body { border-bottom-right-radius: 0; }',
 			expect: 'body { border-end-end-radius: 0; }',
+			args: 'always'
+		}, {
+			source: 'body { border-bottom-right-radius: 0 !important; }',
+			expect: 'body { border-end-end-radius: 0 !important; }',
+			args: 'always'
+		}, {
+			source: 'body { right: 0; left: auto !important; }',
+			expect: 'body { inset-inline-end: 0; inset-inline-start: auto !important; }',
 			args: 'always'
 		}
 	]
