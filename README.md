@@ -224,10 +224,15 @@ Assuming _left to right_ directionality:
 | `border-bottom-left-radius` | `border-end-start-radius`   |
 | `border-bottom-right-radius`| `border-end-end-radius`     |
 
-| Physical Value       | Logical Value         |
-| -------------------- | --------------------- |
-| `text-align: left;`  | `text-align: start;`  |
-| `text-align: right;` | `text-align: end;`    |
+| Physical Value       | Logical Value        |
+| -------------------- | -------------------- |
+| `text-align: left;`  | `text-align: start;` |
+| `text-align: right;` | `text-align: end;`   |
+
+| Physical Value  | Logical Value          |
+| --------------- | ---------------------- |
+| `float: left;`  | `float: inline-start;` |
+| `float: right;` | `float: inline-end;`   |
 
 [cli-img]: https://img.shields.io/travis/csstools/stylelint-use-logical.svg
 [cli-url]: https://travis-ci.org/csstools/stylelint-use-logical
