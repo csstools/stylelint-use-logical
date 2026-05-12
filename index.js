@@ -53,24 +53,24 @@ function ruleFunc(method, opts, context) {
 						const firstInlineDecl = blockStartDecl;
 
 						if (isAutofix) {
-							const values = [ blockStartDecl.value, inlineStartDecl.value, blockEndDecl.value, inlineEndDecl.value ];
+							const values = [ blockStartDecl.value, inlineEndDecl.value, blockEndDecl.value, inlineStartDecl.value ];
 
-							if (values[1] === values[3]) {
-								values.pop();
+              if (values[1] === values[3]) {
+                values.pop();
 
-								if (values[2] === values[1]) {
-									values.pop();
+                if (values[0] === values[2]) {
+                  values.pop();
 
-									if (values[1] === values[0]) {
-										values.pop();
-									}
-								}
-							}
+                  if (values[0] === values[1]) {
+                    values.pop();
+                  }
+                }
+              }
 
-							firstInlineDecl.cloneBefore({
-								prop,
-								value: values.length <= 2 ? values.join(' ') : `logical ${values.join(' ')}`
-							});
+              firstInlineDecl.cloneBefore({
+                prop,
+                value: values.join(' ')
+              });
 
 							blockStartDecl.remove();
 							inlineStartDecl.remove();
