@@ -11,6 +11,11 @@ Physical dimensions and directions are described _left_ to _right_ and _top_ to
 _bottom_, while their logical counterparts are described _start_ to _end_ and
 _inline_ or _block_.
 
+> ℹ️ **NOTE: this project is largely in maintenance mode**
+> 
+> Consider using the [Layout Mappings rules](https://stylelint.io/user-guide/rules#layout-mappings)
+> which are now built into Stylelint.
+
 ---
 
 For example, to add spacing before the start of a paragraph, we might use the
