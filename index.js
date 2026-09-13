@@ -67,15 +67,17 @@ function ruleFunc(method, opts, context) {
 								}
 							}
 
-							firstInlineDecl.cloneBefore({
-								prop,
-								value: values.length <= 2 ? values.join(' ') : `logical ${values.join(' ')}`
-							});
+							if (values.length === 1 || hasNoGlobalValue(values)) {
+								firstInlineDecl.cloneBefore({
+									prop,
+									value: values.length <= 2 ? values.join(' ') : `logical ${values.join(' ')}`
+								});
 
-							blockStartDecl.remove();
-							inlineStartDecl.remove();
-							blockEndDecl.remove();
-							inlineEndDecl.remove();
+								blockStartDecl.remove();
+								inlineStartDecl.remove();
+								blockEndDecl.remove();
+								inlineEndDecl.remove();
+							}
 						} else if (!isDeclReported(blockStartDecl) && !isDeclReported(inlineStartDecl) && !isDeclReported(blockEndDecl) && !isDeclReported(inlineEndDecl)) {
 							reportUnexpectedProperty(firstInlineDecl, prop);
 
@@ -102,15 +104,19 @@ function ruleFunc(method, opts, context) {
 						: inlineStartDecl;
 
 						if (isAutofix) {
-							firstInlineDecl.cloneBefore({
-								prop,
-								value: blockStartDecl.value === inlineStartDecl.value
-									? blockStartDecl.value
-								: [ blockStartDecl.value, inlineStartDecl.value ].join(' ')
-							});
+							const values = blockStartDecl.value === inlineStartDecl.value
+								? [blockStartDecl.value]
+								: [blockStartDecl.value, inlineStartDecl.value]
 
-							blockStartDecl.remove();
-							inlineStartDecl.remove();
+							if (values.length === 1 || hasNoGlobalValue(values)) {
+								firstInlineDecl.cloneBefore({
+									prop,
+									value: values.join(' ')
+								});
+
+								blockStartDecl.remove();
+								inlineStartDecl.remove();
+							}
 						} else if (!isDeclReported(blockStartDecl) && !isDeclReported(inlineStartDecl)) {
 							reportUnexpectedProperty(firstInlineDecl, prop);
 
@@ -166,6 +172,11 @@ function ruleFunc(method, opts, context) {
 	};
 };
 ruleFunc.ruleName = ruleName;
+
+function hasNoGlobalValue(values) {
+	const globalValues = ['inherit', 'initial', 'revert', 'revert-layer', 'unset']
+	return globalValues.every(globalValue => !values.includes(globalValue))
+}
 
 export default stylelint.createPlugin(ruleName, ruleFunc);
 
