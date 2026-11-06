@@ -165,18 +165,20 @@ function ruleFunc(method, opts, context) {
 			}
 		});
 
-		const reportUnexpectedProperty = (decl, logicalProperty) => stylelint.utils.report({
+		const reportUnexpectedProperty = (decl, logicalProperty, fix) => stylelint.utils.report({
 			message: messages.unexpectedProp(decl.prop, logicalProperty),
 			node: decl,
 			result,
-			ruleName
+			ruleName,
+			fix
 		});
 
-		const reportUnexpectedValue = (node, value) => stylelint.utils.report({
+		const reportUnexpectedValue = (node, value, fix) => stylelint.utils.report({
 			message: messages.unexpectedValue(node.prop, node.value, value),
 			node,
 			result,
-			ruleName
+			ruleName,
+			fix
 		});
 
 		if (isMethodValid && isMethodAlways(method)) {
@@ -195,7 +197,7 @@ function ruleFunc(method, opts, context) {
 
 						const firstInlineDecl = blockStartDecl;
 
-						if (isAutofix) {
+						const fix = () => {
 							const values = [ blockStartDecl.value, inlineStartDecl.value, blockEndDecl.value, inlineEndDecl.value ];
 
 							if (values[1] === values[3]) {
@@ -219,8 +221,12 @@ function ruleFunc(method, opts, context) {
 							inlineStartDecl.remove();
 							blockEndDecl.remove();
 							inlineEndDecl.remove();
+						};
+
+						if (isAutofix) {
+							fix();
 						} else if (!isDeclReported(blockStartDecl) && !isDeclReported(inlineStartDecl) && !isDeclReported(blockEndDecl) && !isDeclReported(inlineEndDecl)) {
-							reportUnexpectedProperty(firstInlineDecl, prop);
+							reportUnexpectedProperty(firstInlineDecl, prop, fix);
 
 							reportedDecls.set(blockStartDecl);
 							reportedDecls.set(inlineStartDecl);
@@ -244,7 +250,7 @@ function ruleFunc(method, opts, context) {
 							? blockStartDecl
 						: inlineStartDecl;
 
-						if (isAutofix) {
+						const fix = () => {
 							firstInlineDecl.cloneBefore({
 								prop,
 								value: blockStartDecl.value === inlineStartDecl.value
@@ -254,8 +260,12 @@ function ruleFunc(method, opts, context) {
 
 							blockStartDecl.remove();
 							inlineStartDecl.remove();
+						};
+
+						if (isAutofix) {
+							fix();
 						} else if (!isDeclReported(blockStartDecl) && !isDeclReported(inlineStartDecl)) {
-							reportUnexpectedProperty(firstInlineDecl, prop);
+							reportUnexpectedProperty(firstInlineDecl, prop, fix);
 
 							reportedDecls.set(blockStartDecl);
 							reportedDecls.set(inlineStartDecl);
@@ -270,10 +280,14 @@ function ruleFunc(method, opts, context) {
 							return;
 						}
 
-						if (isAutofix) {
+						const fix = () => {
 							physicalDecl.prop = prop;
+						};
+
+						if (isAutofix) {
+							fix();
 						} else if (!isDeclReported(physicalDecl)) {
-							reportUnexpectedProperty(physicalDecl, prop);
+							reportUnexpectedProperty(physicalDecl, prop, fix);
 
 							reportedDecls.set(physicalDecl);
 						}
@@ -295,10 +309,14 @@ function ruleFunc(method, opts, context) {
 					if (valuekey in props) {
 						const value = props[valuekey];
 
-						if (isAutofix) {
+						const fix = () => {
 							node.value = value;
+						};
+
+						if (isAutofix) {
+							fix();
 						} else {
-							reportUnexpectedValue(node, value);
+							reportUnexpectedValue(node, value, fix);
 
 							reportedDecls.set(node);
 						}
@@ -308,6 +326,7 @@ function ruleFunc(method, opts, context) {
 		}
 	};
 }ruleFunc.ruleName = ruleName;
+ruleFunc.meta = { fixable: true };
 
 var index = stylelint.createPlugin(ruleName, ruleFunc);
 
