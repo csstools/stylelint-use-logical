@@ -30,14 +30,13 @@
   "engines": {
     "node": ">=14.0.0"
   },
-  "dependencies": {},
   "devDependencies": {
     "rollup": "^4.0.0",
-    "stylelint": "^17.0.0",
+    "stylelint": "^18.0.0",
     "stylelint-tape": "^5.1.0"
   },
   "peerDependencies": {
-    "stylelint": ">= 11 < 18"
+    "stylelint": ">= 11 < 19"
   },
   "eslintConfig": {
     "extends": "dev"
